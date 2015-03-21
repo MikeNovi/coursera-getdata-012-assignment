@@ -1,4 +1,5 @@
 library(data.table)
+library(dplyr)
 
 # Loads the data of a set specified by the set variable
 # and adds the feature name as header as the column names
@@ -7,7 +8,9 @@ loadSetWithLabels <- function(setName) {
   tmpFrame <- read.table(fn);
   dt <- data.table(tmpFrame);
   
+  # Load the labels (clean out bad headers)
   labelMap <- read.table("data/features.txt");
+  labelMap <- within(labelMap, V2 <- gsub("BodyBody", "Body", V2))
   setnames(dt, as.vector(labelMap[,1]), as.vector(labelMap[,2]));
   
   # Remove all columns that are not mean or standard devations
@@ -54,9 +57,12 @@ loadAnnotatedDataSet <- function(setName) {
   ds
 }
 
-run_analysis <- function() {
+run_analysis <- function(resultFile) {
   testDT <- loadAnnotatedDataSet('test');
   trainDT <- loadAnnotatedDataSet('train');
   DT <- rbind(testDT, trainDT);
   DT;
+  
+  DTTidy <- DT %>% group_by(subject, activity) %>% summarise_each(funs(mean))
+  write.table(DTTidy, resultFile, sep = ",", row.names = FALSE)
 }
