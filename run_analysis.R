@@ -10,7 +10,6 @@ loadSetWithLabels <- function(setName) {
   
   # Load the labels (clean out bad headers)
   labelMap <- read.table("data/features.txt");
-  labelMap <- within(labelMap, V2 <- gsub("BodyBody", "Body", V2))
   setnames(dt, as.vector(labelMap[,1]), as.vector(labelMap[,2]));
   
   # Remove all columns that are not mean or standard devations
@@ -57,6 +56,47 @@ loadAnnotatedDataSet <- function(setName) {
   ds
 }
 
+# Translate provided headers into human readable headers
+translateColumnLabels <- function(label) {
+  label <- gsub("BodyBody", "Body", label);
+  sLabel <- strsplit(label, "-");
+  
+  if (label == sLabel) {
+    return(label);
+  }
+  
+  component <- switch(sLabel[[1]][2],
+    "std()"="STD_DEV",
+    "mean()"="MEAN"
+  );
+  
+  domain <- switch(substring(sLabel[[1]][1], 1, 1),
+    t="TIME",
+    f="FREQ"
+  );
+
+  measure = switch(substring(sLabel[[1]][1], 2),
+    BodyAcc="BODY_LIN_ACC",
+    GravityAcc="GRAVITY_LIN_ACC",
+    BodyAccJerk="BODY_JERK_ACC",
+    BodyGyro="BODY_ANG_VELOCITY",
+    BodyGyroJerk="BODY_JERK_ANG_VELOCITY",
+    BodyAccMag="BODY_LIN_ACC_MAGNITUDE",
+    GravityAccMag="GRAVITY_ACC_MAGNITUDE",
+    BodyAccJerkMag="BODY_JERK_ACC_MAGNITUDE",
+    BodyGyroMag="BODY_ANG_VELOCITY_MAGNITUDE",
+    BodyGyroJerkMag="BODY_JERK_ANG_VELOCITY_MAGNITUDE"
+  );
+  
+  if (length(sLabel[[1]]) > 2) {
+    lbl <- paste(component, measure, sLabel[[1]][3], domain, sep="_") 
+  }
+  else {
+    lbl <- paste(component, measure, domain, sep="_") 
+  }
+  lbl
+}
+
 run_analysis <- function(resultFile) {
   testDT <- loadAnnotatedDataSet('test');
   trainDT <- loadAnnotatedDataSet('train');
@@ -64,5 +104,7 @@ run_analysis <- function(resultFile) {
   DT;
   
   DTTidy <- DT %>% group_by(subject, activity) %>% summarise_each(funs(mean))
+  c <- colnames(DTTidy)
+  setnames(DTTidy, c, sapply(c, translateColumnLabels, simplify=array, USE.NAMES=FALSE))
   write.table(DTTidy, resultFile, sep = ",", row.names = FALSE)
 }
