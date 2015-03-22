@@ -1,18 +1,18 @@
-subject   1
+**subject**   1
   Unique identifier of subject of the experiment
 
-activity  19
-  Descriptive identifier of action performed by subject and measured for the observation
-    STANDING
-    SITTING
-    LAYING
-    WALKING
-    WALKING\_DOWNSTAIRS
-    WALKING\_UPSTAIRS
+**activity**  19
+  <span style="text-indent: 5em;">Descriptive identifier of action performed by subject and measured for the observation</span>
+    * STANDING
+    * SITTING
+    * LAYING
+    * WALKING
+    * WALKING\_DOWNSTAIRS
+    * WALKING\_UPSTAIRS
 
 **MEAN\_BODY\_LIN\_ACC\_X\_TIME**
-  <p>Average of the mean of multiple observations of the bodily linear acceleration of the phone along the phone's X axis. Observed in the time domain.</p>
-    -1.0..1.0 (normalized)
+  <span style="text-indent: 5em;">Average of the mean of multiple observations of the bodily linear acceleration of the phone along the phone's X axis. Observed in the time domain.</span>
+    <span style="text-indent: 10em;">-1.0..1.0 (normalized)</span>
 
 **MEAN\_BODY\_LIN\_ACC\_Y\_TIME**
   Average of the mean of multiple observations of the bodily linear acceleration of the phone along the phone's Y axis. Observed in the time domain.
